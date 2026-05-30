@@ -1,0 +1,4 @@
+allowBuilds:
+  '@playwright/browser-chromium': true
+  '@playwright/browser-firefox': false
+  '@playwright/browser-webkit': false

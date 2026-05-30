@@ -12,7 +12,9 @@
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
-    "@types/node": "^25.9.1"
+    "@playwright/browser-chromium": "^1.60.0",
+    "@playwright/browser-firefox": "^1.60.0",
+    "@playwright/browser-webkit": "^1.60.0"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

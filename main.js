@@ -34,21 +34,28 @@ function get_job_count_from_html_page(html_content) {
                 result = result.trim()
                 total_jobs = parseInt(result)
             } else {
-                // Check 4: Page contains the regex <num> results
-                const div = $('*:contains("results")');
-                if (div.length > 0) {
-                    for (let i = 0; i < div.length; i++) {
-                        let text = div.eq(i).text()
-                        let match_result = text.match(/\d+ results/i)
-                        if (match_result !== null) {
-                            let result = match_result[0]
-                            result = result.replace("results", "")
-                            result = result.trim()
-                            total_jobs = parseInt(result)
-                            break
+                // Check 4: Page contains the sapn tag of class result-count
+                const result_count_element = $('span.result-count')
+                if (result_count_element.length > 0) {
+                    let result = result_count_element.text()
+                    total_jobs = parseInt(result)
+                } else {
+                    // Check 5: Page contains the regex <num> results
+                    const div = $('*:contains("results")');
+                    if (div.length > 0) {
+                        for (let i = 0; i < div.length; i++) {
+                            let text = div.eq(i).text()
+                            let match_result = text.match(/\d+ results/i)
+                            if (match_result !== null) {
+                                let result = match_result[0]
+                                result = result.replace("results", "")
+                                result = result.trim()
+                                total_jobs = parseInt(result)
+                                break
+                            }
                         }
                     }
-                } 
+                }
             }
         }
             
@@ -59,13 +66,15 @@ function get_job_count_from_html_page(html_content) {
 
 async function main() {
     const user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
-    let options = {  // Or 'firefox' or 'webkit'.
-        args: [`--user-agent=${user_agent}`, '--disable-blink-features=AutomationControlled', '--window-size=1920,1080'],
+    const browser_options = {
+        args: [`--user-agent=${user_agent}`, '--disable-blink-features=AutomationControlled', '--window-size=1920,1080', '--window-position=0,0'],
         ignoreDefaultArgs: ['--mute-audio'],
         headless: false
     }
-    const browser = await chromium.launch(options);
-    const context = await browser.newContext();
+    const browser = await chromium.launch(browser_options);
+
+    const context_options = { viewport: null }
+    const context = await browser.newContext(context_options);
     const page = await context.newPage();
 
     const it_certs = ["Comptia Network+", "CCNA", "Comptia Security+"] 
@@ -73,14 +82,16 @@ async function main() {
     const company_career_urls = [
         "https://www.lockheedmartinjobs.com/search-jobs/",
         "https://careers.rtx.com/global/en/search-results?keywords=",
-        "https://jobs.northropgrumman.com/careers?query="
+        "https://jobs.northropgrumman.com/careers?query=",
+        "https://www.gdit.com/careers/search/?q=",
+        "https://jobs.baesystems.com/global/en/search-results?keywords="
     ]
 
     let url_infos = []
 
     for (const it_cert of it_certs) {
         for (const company_career_url of company_career_urls) {
-            const search_query = encodeURI(it_cert)
+            const search_query = encodeURIComponent(it_cert)
             let url = company_career_url + search_query
             const url_info = {"url": url, "it_cert": it_cert}
             url_infos.push(url_info)
