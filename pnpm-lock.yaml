@@ -15,11 +15,32 @@ importers:
         specifier: ^1.60.0
         version: 1.60.0
     devDependencies:
+      '@playwright/browser-chromium':
+        specifier: ^1.60.0
+        version: 1.60.0
+      '@playwright/browser-firefox':
+        specifier: ^1.60.0
+        version: 1.60.0
+      '@playwright/browser-webkit':
+        specifier: ^1.60.0
+        version: 1.60.0
       '@types/node':
         specifier: ^25.9.1
         version: 25.9.1
 
 packages:
+
+  '@playwright/browser-chromium@1.60.0':
+    resolution: {integrity: sha512-0ND2pbNWKJYwhlA1LNaDC3DP2x7eguQkQF7Ga7XAlJV0AFieqYNRw/E+gaY9BpSFr1TYwfwXQv1bHq5AK9nbvA==}
+    engines: {node: '>=18'}
+
+  '@playwright/browser-firefox@1.60.0':
+    resolution: {integrity: sha512-md1aC0gPRu1m8PzhDwei2m3q0gz6SkJ9ZJBVSm69DJXeDq22W6AehillbKuoW2bL2ma3shP/iVVKNekp9mwUUw==}
+    engines: {node: '>=18'}
+
+  '@playwright/browser-webkit@1.60.0':
+    resolution: {integrity: sha512-nQewGFO15DUryAyw3141liorjWDy4mUDsxw2Y4d0f89piRREaBJIJVlnTIbyzQcjVw74UNXULpwT4IoyNkX0hA==}
+    engines: {node: '>=18'}
 
   '@types/node@25.9.1':
     resolution: {integrity: sha512-xfrlY7UD5rMJk3ZVJP8BNzS28J36YJg+xp+LPXV1TdWxr8uMH5A860QNxYDGQe/ylDSgjxE52Q9VnO7p75tJxg==}
@@ -123,6 +144,18 @@ packages:
     engines: {node: '>=18'}
 
 snapshots:
+
+  '@playwright/browser-chromium@1.60.0':
+    dependencies:
+      playwright-core: 1.60.0
+
+  '@playwright/browser-firefox@1.60.0':
+    dependencies:
+      playwright-core: 1.60.0
+
+  '@playwright/browser-webkit@1.60.0':
+    dependencies:
+      playwright-core: 1.60.0
 
   '@types/node@25.9.1':
     dependencies:
