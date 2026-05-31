@@ -18,6 +18,7 @@ function get_job_count_from_html_page(html_content) {
             if (i === 1) {
                 let text = b_tag.eq(i).text()
                 total_jobs = parseInt(text)
+                job_count_found = true
             }
         }
     } else {
