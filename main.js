@@ -1,6 +1,7 @@
 import { chromium } from 'playwright'
 import * as cheerio from 'cheerio';
 import fs from 'node:fs';
+import { spawnSync } from 'child_process';
 
 function get_job_count_from_html_page(html_content) {
     let $ = cheerio.load(html_content);
@@ -65,7 +66,8 @@ function get_job_count_from_html_page(html_content) {
 }
 
 async function main() {
-    const user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+    const chrome_browser_version = get_chrome_browser_version()
+    const user_agent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome_browser_version} Safari/537.36`
     const browser_options = {
         args: [`--user-agent=${user_agent}`, '--disable-blink-features=AutomationControlled', '--window-size=1920,1080', '--window-position=0,0'],
         ignoreDefaultArgs: ['--mute-audio'],
@@ -191,5 +193,17 @@ function reverse_sort_list_of_nums(list_of_nums) {
     const descending = list_of_nums.sort((a, b) => b - a);
     return descending
 }
+
+function get_chrome_browser_version() {
+    const cmd = "(Get-Item \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\").VersionInfo.FileVersion"
+    let process = spawnSync("powershell.exe",[cmd])
+    const output = process.stdout.toString()
+
+    const version_elements = output.split(".")
+    const major_version = version_elements[0]
+    const chrome_browser_version = `${major_version}.0.0.0`
+
+    return chrome_browser_version
+};
 
 main()
