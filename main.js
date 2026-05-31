@@ -196,7 +196,7 @@ function reverse_sort_list_of_nums(list_of_nums) {
 
 function get_chrome_browser_version() {
     const cmd = "(Get-Item \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\").VersionInfo.FileVersion"
-    let process = spawnSync("powershell.exe",[cmd])
+    let process = spawnSync("powershell.exe", [cmd])
     const output = process.stdout.toString()
 
     const version_elements = output.split(".")
