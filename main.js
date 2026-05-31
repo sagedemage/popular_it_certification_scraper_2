@@ -7,6 +7,7 @@ function get_job_count_from_html_page(html_content) {
     let $ = cheerio.load(html_content);
 
     let total_jobs = 0
+    let job_count_found = false
 
     // Check 1: Page contains the div tag of class table-counts
     let div_table_counts_tag = $('div.table-counts');
@@ -26,6 +27,7 @@ function get_job_count_from_html_page(html_content) {
             let span_total_jobs_tag = p_job_info_tag.find("span.total-jobs")
             let text = span_total_jobs_tag.text().trim()
             total_jobs = parseInt(text)
+            job_count_found = true
         } else {
             // Check 3: Page contains attribute data-testid="job-count"
             const job_count_element = $('[data-testid="job-count"]');
@@ -34,12 +36,14 @@ function get_job_count_from_html_page(html_content) {
                 result = result.replace("jobs", "")
                 result = result.trim()
                 total_jobs = parseInt(result)
+                job_count_found = true
             } else {
                 // Check 4: Page contains the sapn tag of class result-count
                 const result_count_element = $('span.result-count')
                 if (result_count_element.length > 0) {
                     let result = result_count_element.text()
                     total_jobs = parseInt(result)
+                    job_count_found = true
                 } else {
                     // Check 5: Page contains the regex <num> results
                     const div = $('*:contains("results")');
@@ -52,6 +56,7 @@ function get_job_count_from_html_page(html_content) {
                                 result = result.replace("results", "")
                                 result = result.trim()
                                 total_jobs = parseInt(result)
+                                job_count_found = true
                                 break
                             }
                         }
@@ -59,7 +64,10 @@ function get_job_count_from_html_page(html_content) {
                 }
             }
         }
-            
+    }
+
+    if (job_count_found === false) {
+        throw new Error("Job count is not found!");
     }
 
     return total_jobs
@@ -69,7 +77,15 @@ async function main() {
     const chrome_browser_version = get_chrome_browser_version()
     const user_agent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome_browser_version} Safari/537.36`
     const browser_options = {
-        args: [`--user-agent=${user_agent}`, '--disable-blink-features=AutomationControlled', '--window-size=1920,1080', '--window-position=0,0'],
+        args: [
+            `--user-agent=${user_agent}`,
+            '--disable-blink-features=AutomationControlled',
+            '--window-size=1920,1080',
+            '--window-position=0,0',
+            '--disable-extensions',
+            '--disable-sync',
+            '--disable-default-apps'
+        ],
         ignoreDefaultArgs: ['--mute-audio'],
         headless: false
     }
@@ -77,6 +93,17 @@ async function main() {
 
     const context_options = { viewport: null }
     const context = await browser.newContext(context_options);
+
+    // set navigator.webdriver to undefined to remove automation indicators
+    await context.addInitScript(() => {
+        Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined
+        });
+        window.chrome = {
+            runtime: {}
+        };
+    });
+
     const page = await context.newPage();
 
     const it_certs = ["Comptia Network+", "CCNA", "Comptia Security+"] 
